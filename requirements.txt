@@ -1,2 +1,6 @@
-streamlit>=1.32
-streamlit-tree>=0.0.10
+# Essential build tools
+wheel
+setuptools
+
+streamlit
+streamlit-tree
