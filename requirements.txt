@@ -1,0 +1,2 @@
+streamlit>=1.32
+streamlit-tree>=0.0.10
