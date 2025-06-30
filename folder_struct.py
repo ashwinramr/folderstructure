@@ -1,15 +1,14 @@
 import streamlit as st
-import re
 
 st.set_page_config(page_title="Markdown Folder Tree Generator", layout="centered")
 
-st.title("📁 Markdown Folder Structure Generator with Visual Preview")
+st.title("📁 Markdown Folder Structure Generator with Interactive Visual Tree")
 st.write(
-    "Enter your folder hierarchy manually and see it as a markdown tree and interactive visual tree."
+    "Define your folder hierarchy manually, generate a markdown tree, and preview it as an interactive expandable folder tree."
 )
 
 # --- Folder structure input ---
-st.subheader("Enter folder structure")
+st.subheader("Enter Folder Structure")
 root_folder = st.text_input("Root folder name", value="project-root")
 
 folder_list = st.text_area(
@@ -19,7 +18,10 @@ folder_list = st.text_area(
 )
 
 if st.button("Generate Trees"):
-    # --- Build Markdown tree ---
+    # --- Parse folder lines ---
+    lines = folder_list.strip().split("\n")
+
+    # --- Generate markdown tree ---
     def build_markdown_tree(lines, indent_size=2):
         markdown_lines = [f"{root_folder}/"]
         for line in lines:
@@ -29,7 +31,6 @@ if st.button("Generate Trees"):
             markdown_lines.append(prefix)
         return "\n".join(markdown_lines)
 
-    lines = folder_list.strip().split("\n")
     markdown_tree = build_markdown_tree(lines)
 
     st.subheader("📄 Generated Markdown Tree")
@@ -57,21 +58,12 @@ if st.button("Generate Trees"):
 
     tree_data = build_tree_dict(lines)
 
-    # --- Visual interactive tree ---
-    st.subheader("🌳 Interactive Folder Tree")
-    try:
-        from streamlit_tree import tree
+    # --- Render interactive folder tree with expanders ---
+    st.subheader("🌳 Interactive Expandable Folder Tree")
 
-        def render_tree(node):
-            with tree(node["name"]):
-                for child in node["children"]:
-                    render_tree(child)
+    def render_tree_with_expanders(node):
+        with st.expander(node["name"], expanded=True):
+            for child in node["children"]:
+                render_tree_with_expanders(child)
 
-        render_tree(tree_data)
-    except ModuleNotFoundError:
-        st.warning(
-            "To view the interactive folder tree, install the streamlit-tree component:\n\n"
-            "```bash\npip install streamlit-tree\n```"
-        )
-        st.info("Fallback: interactive tree not shown because streamlit-tree is missing.")
-    
+    render_tree_with_expanders(tree_data)

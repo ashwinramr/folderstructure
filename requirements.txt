@@ -1,6 +1,3 @@
 # Essential build tools
-wheel
-setuptools
 
 streamlit
-streamlit-tree
